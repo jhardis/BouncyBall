@@ -1,6 +1,7 @@
 import Foundation
 
-let circle = OvalShape(width: 150, height: 150)         // p. 223
+//let circle = OvalShape(width: 150, height: 150)         // p. 223
+let circle = OvalShape(width: 40, height: 40)         // p. 231
 
 let barrierWidth = 300.0                                // p. 225
 let barrierHeight = 25.0                                // p. 225
@@ -42,6 +43,8 @@ func setup() {
     scene.add(circle)                                   // p. 223
     circle.hasPhysics = true                            // p. 224
     
+    circle.fillColor = .blue                            // p. 231
+    
     // Add a barrier to the scene                       // p. 225
     barrier.position = Point(x: 200, y:150)             // p. 225
     barrier.hasPhysics = true                           // p. 225
@@ -49,11 +52,15 @@ func setup() {
     
     barrier.isImmobile = true                           // p. 226
     
+    barrier.fillColor = .init(red: 0.5, green: 0.0, blue: 0.0)
+    
     // Add a funnel to the scene                        // p. 228
     funnel.position = Point(x: 200, y: scene.height-25) // p. 228
     scene.add(funnel)                                   // p. 228
     
     funnel.onTapped = dropBall                          // p. 229
+    
+    funnel.fillColor = .purple
     
     
 }
