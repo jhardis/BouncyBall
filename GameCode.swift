@@ -1,7 +1,7 @@
 import Foundation
 
 //let circle = OvalShape(width: 150, height: 150)         // p. 223
-let circle = OvalShape(width: 40, height: 40)         // p. 231
+let ball = OvalShape(width: 40, height: 40)             // p. 234
 
 let barrierWidth = 300.0                                // p. 225
 let barrierHeight = 25.0                                // p. 225
@@ -38,36 +38,40 @@ for example if statements and for loops, at the top level; they have to be writt
 of a function.
 */
 
-func setup() {
-    circle.position = Point(x: 250, y: 400)             // p. 223
-    scene.add(circle)                                   // p. 223
-    circle.hasPhysics = true                            // p. 224
-    
-    circle.fillColor = .blue                            // p. 231
-    
+fileprivate func setupBall() {
+    ball.position = Point(x: 250, y: 400)             // p. 223
+    ball.hasPhysics = true                            // p. 224
+    ball.fillColor = .blue
+    scene.add(ball)                                   // p. 223
+}
+
+fileprivate func setupBarrier() {
     // Add a barrier to the scene                       // p. 225
     barrier.position = Point(x: 200, y:150)             // p. 225
     barrier.hasPhysics = true                           // p. 225
-    scene.add(barrier)                                  // p. 225
-    
     barrier.isImmobile = true                           // p. 226
-    
     barrier.fillColor = .init(red: 0.5, green: 0.0, blue: 0.0)
-    
+    scene.add(barrier)                                  // p. 225
+}
+
+fileprivate func setupFunnel() {
     // Add a funnel to the scene                        // p. 228
     funnel.position = Point(x: 200, y: scene.height-25) // p. 228
-    scene.add(funnel)                                   // p. 228
-    
     funnel.onTapped = dropBall                          // p. 229
-    
     funnel.fillColor = .purple
-    
+    scene.add(funnel)                                   // p. 228
+}
+
+func setup() {
+    setupBall()                                         // p. 234
+    setupBarrier()                                      // p. 234
+    setupFunnel()                                       // p. 234
     
 }
 
 // Drops the ball by moving it to the funnel's position // p. 229
 func dropBall() {                                       // p. 229
-    circle.position = funnel.position                   // p. 229
+    ball.position = funnel.position                   // p. 229
 }
 
 
