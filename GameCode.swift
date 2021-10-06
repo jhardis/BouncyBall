@@ -1,19 +1,10 @@
 import Foundation
+import UIKit
 
-//let circle = OvalShape(width: 150, height: 150)         // p. 223
+var barriers: [Shape] = []
+var targets: [Shape] = []
+
 let ball = OvalShape(width: 40, height: 40)             // p. 234
-
-let barrierWidth = 300.0                                // p. 225
-let barrierHeight = 25.0                                // p. 225
-                                                        // p. 225
-let barrierPoints = [                                   // p. 225
-    Point(x:0, y:0),                                    // p. 225
-    Point(x:0, y: barrierHeight),                       // p. 225
-    Point(x: barrierWidth, y:barrierHeight),            // p. 225
-    Point(x: barrierWidth, y:0)                         // p. 225
-]                                                       // p. 225
-                                                        // p. 225
-let barrier = PolygonShape(points: barrierPoints)       // p. 225
 
 let funnelPoints = [                                    // p. 227
     Point(x: 0, y: 50),                                 // p. 227
@@ -23,16 +14,6 @@ let funnelPoints = [                                    // p. 227
 ]                                                       // p. 227
                                                         // p. 227
 let funnel = PolygonShape(points: funnelPoints)         // p. 227
-
-let targetPoints = [                                    // p. 236
-    Point(x: 10, y: 0),                                 // p. 236
-    Point(x: 0, y: 10),                                 // p. 236
-    Point(x: 10, y: 20),                                // p. 236
-    Point(x: 20, y: 10)                                 // p. 236
-]                                                       // p. 236
-                                                        // p. 236
-let target = PolygonShape(points: targetPoints)         // p. 236
-
 
 
 /*
@@ -58,13 +39,22 @@ fileprivate func setupBall() {
     ball.onTapped = resetGame                           // p. 245
 }
 
-fileprivate func setupBarrier() {
+fileprivate func addBarrier(at position: Point, width: Double,
+                            height: Double, angle: Double) {
     // Add a barrier to the scene                       // p. 225
-    barrier.position = Point(x: 200, y:150)             // p. 225
+    let barrierPoints = [                               // p. 250
+        Point(x: 0, y: 0),                              // p. 250
+        Point(x: 0, y: height),                         // p. 250
+        Point(x: width, y: height),                     // p. 250
+        Point(x: width, y: 0),                          // p. 250
+    ]                                                   // p. 250
+    let barrier = PolygonShape(points: barrierPoints)   // p. 250
+    barriers.append(barrier)                            // p. 250
+    barrier.position = position                         // p. 250
     barrier.hasPhysics = true                           // p. 225
     barrier.isImmobile = true                           // p. 226
     barrier.fillColor = .init(red: 0.5, green: 0.0, blue: 0.0)
-    barrier.angle = 0.1                                 // p. 246
+    barrier.angle = angle                               // p. 250
     scene.add(barrier)                                  // p. 225
 }
 
@@ -77,9 +67,17 @@ fileprivate func setupFunnel() {
     scene.add(funnel)                                   // p. 228
 }
 
-fileprivate func setupTarget() {                        // p. 237
+fileprivate func addTarget(at position: Point) {        // p. 252
     // Add a target to the scene                        // p. 237
-    target.position = Point(x: 172, y: 197)             // p. 237
+    let targetPoints = [                                // p. 236
+        Point(x: 10, y: 0),                             // p. 236
+        Point(x: 0, y: 10),                             // p. 236
+        Point(x: 10, y: 20),                            // p. 236
+        Point(x: 20, y: 10)                             // p. 236
+    ]                                                   // p. 236
+    let target = PolygonShape(points: targetPoints)     // p. 236
+    targets.append(target)                              // p. 253
+    target.position = position                          // p. 253
     target.hasPhysics = true                            // p. 237
     target.isImmobile = true                            // p. 237
     target.isImpermeable = true                         // p. 237
@@ -91,9 +89,18 @@ fileprivate func setupTarget() {                        // p. 237
 
 func setup() {
     setupBall()                                         // p. 234
-    setupBarrier()                                      // p. 234
     setupFunnel()                                       // p. 234
-    setupTarget()                                       // p. 237
+    // Create three barriers
+    addBarrier(at: Point(x: 200, y:150), width: 80,
+               height: 25, angle: 0.1)                  // p. 251
+    addBarrier(at: Point(x: 94, y:151), width: 80,
+               height: 25, angle: -0.2)
+    addBarrier(at: Point(x:337, y:126), width: 80,
+               height: 25, angle: 0.2)
+    // Create three targets
+    addTarget(at: Point(x: 172, y: 197))                // p. 237
+    addTarget(at: Point(x: 228, y: 491))
+    addTarget(at: Point(x: 171, y: 530))
     resetGame()                                         // p. 245
 //    scene.onShapeMoved = printPosition(of:)             // p. 247
     
@@ -103,9 +110,13 @@ func setup() {
 func dropBall() {                                       // p. 229
     ball.stopAllMotion()                                // p. 242
     ball.position = funnel.position                     // p. 229
-    barrier.isDraggable = false                         // p. 244 (Freeze position)
-    //bug:  Not true on first instance, but fixed on p. 245
-    target.fillColor = .yellow                          // Bug Fix
+    for barrier in barriers {
+        barrier.isDraggable = false                     // p. 244 (Freeze position)
+    }
+    // Bug Fix.  Could also logically be in resetGame()
+    for target in targets {
+        target.fillColor = .yellow                      // Bug Fix
+    }
 }
 
 // Handles collisions between the ball and the targets  // p. 240
@@ -116,7 +127,9 @@ func ballCollided(with otherShape: Shape) {             // p. 240
 
 // Asynchronous callback for ball leaving screen
 func ballExitedScene() {
-    barrier.isDraggable = true                          // p. 244 (Unfreeze position)
+    for barrier in barriers {
+        barrier.isDraggable = true                      // p. 244 (Unfreeze position)
+    }
 }
 
 // Resets the game by moving the ball below the scene   // p. 245
