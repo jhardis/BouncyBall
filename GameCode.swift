@@ -50,7 +50,11 @@ fileprivate func setupBall() {
     ball.hasPhysics = true                              // p. 224
     ball.fillColor = .blue
     ball.onCollision = ballCollided(with:)              // p. 240
+    ball.isDraggable = false                            // p. 242
     scene.add(ball)                                     // p. 223
+    scene.trackShape(ball)                              // p. 243
+    ball.onExitedScene = ballExitedScene                // p. 243
+    ball.onTapped = resetGame                           // p. 245
 }
 
 fileprivate func setupBarrier() {
@@ -67,6 +71,7 @@ fileprivate func setupFunnel() {
     funnel.position = Point(x: 200, y: scene.height-25) // p. 228
     funnel.onTapped = dropBall                          // p. 229
     funnel.fillColor = .purple
+    funnel.isDraggable = false                          // p. 242
     scene.add(funnel)                                   // p. 228
 }
 
@@ -77,6 +82,7 @@ fileprivate func setupTarget() {                        // p. 237
     target.isImmobile = true                            // p. 237
     target.isImpermeable = true                         // p. 237
     target.fillColor = .yellow                          // p. 237
+    target.isDraggable = false                          // p. 242
     target.name = "target"                              // p. 241
     scene.add(target)                                   // p. 237
 }
@@ -86,12 +92,17 @@ func setup() {
     setupBarrier()                                      // p. 234
     setupFunnel()                                       // p. 234
     setupTarget()                                       // p. 237
+    resetGame()                                         // p. 245
     
 }
 
 // Drops the ball by moving it to the funnel's position // p. 229
 func dropBall() {                                       // p. 229
+    ball.stopAllMotion()                                // p. 242
     ball.position = funnel.position                     // p. 229
+    barrier.isDraggable = false                         // p. 244 (Freeze position)
+    //bug:  Not true on first instance, but fixed on p. 245
+    target.fillColor = .yellow                          // Bug Fix
 }
 
 // Handles collisions between the ball and the targets  // p. 240
@@ -99,5 +110,16 @@ func ballCollided(with otherShape: Shape) {             // p. 240
     if otherShape.name != "target" {return}             // p. 241
     otherShape.fillColor = .green                       // p. 240
 }                                                       // p. 240
+
+// stop motion at screen bottom??
+func ballExitedScene() {
+    barrier.isDraggable = true                          // p. 244 (Unfreeze position)
+}
+
+// Resets the game by moving the ball below the scene   // p. 245
+//  which will unlock the barriers.                     // p. 245
+func resetGame() {
+    ball.position = Point(x: 0, y: -80)
+}
 
 
