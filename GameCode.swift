@@ -51,6 +51,7 @@ fileprivate func setupBall() {
     ball.fillColor = .blue
     ball.onCollision = ballCollided(with:)              // p. 240
     ball.isDraggable = false                            // p. 242
+    ball.bounciness = 0.6                               // p. 246
     scene.add(ball)                                     // p. 223
     scene.trackShape(ball)                              // p. 243
     ball.onExitedScene = ballExitedScene                // p. 243
@@ -63,6 +64,7 @@ fileprivate func setupBarrier() {
     barrier.hasPhysics = true                           // p. 225
     barrier.isImmobile = true                           // p. 226
     barrier.fillColor = .init(red: 0.5, green: 0.0, blue: 0.0)
+    barrier.angle = 0.1                                 // p. 246
     scene.add(barrier)                                  // p. 225
 }
 
@@ -77,7 +79,7 @@ fileprivate func setupFunnel() {
 
 fileprivate func setupTarget() {                        // p. 237
     // Add a target to the scene                        // p. 237
-    target.position = Point(x: 200, y: 400)             // p. 237
+    target.position = Point(x: 172, y: 197)             // p. 237
     target.hasPhysics = true                            // p. 237
     target.isImmobile = true                            // p. 237
     target.isImpermeable = true                         // p. 237
@@ -93,6 +95,7 @@ func setup() {
     setupFunnel()                                       // p. 234
     setupTarget()                                       // p. 237
     resetGame()                                         // p. 245
+//    scene.onShapeMoved = printPosition(of:)             // p. 247
     
 }
 
@@ -111,7 +114,7 @@ func ballCollided(with otherShape: Shape) {             // p. 240
     otherShape.fillColor = .green                       // p. 240
 }                                                       // p. 240
 
-// stop motion at screen bottom??
+// Asynchronous callback for ball leaving screen
 func ballExitedScene() {
     barrier.isDraggable = true                          // p. 244 (Unfreeze position)
 }
@@ -121,5 +124,11 @@ func ballExitedScene() {
 func resetGame() {
     ball.position = Point(x: 0, y: -80)
 }
+
+// Diagnostic function                                  // p. 247
+func printPosition(of shape: Shape) {                   // p. 247
+    print(shape.position)                               // p. 247
+}                                                       // p. 247
+
 
 
